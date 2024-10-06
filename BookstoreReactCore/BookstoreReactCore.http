@@ -1,0 +1,6 @@
+@BookstoreReactCore_HostAddress = http://localhost:5007
+
+GET {{BookstoreReactCore_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
