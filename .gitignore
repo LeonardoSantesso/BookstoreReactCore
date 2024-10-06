@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/BookstoreReactCore/bin/Debug/net8.0
+/DAL/bin/Debug/net8.0
+/DAL/obj/Debug/net8.0/ref
