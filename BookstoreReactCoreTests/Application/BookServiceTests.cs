@@ -55,7 +55,7 @@ public class BookServiceTests : TestBase
 
         // Assert
         Assert.NotNull(allBooks);
-        Assert.Equal(3, allBooks.Count);
+        Assert.Equal(3, allBooks.List.Count);
     }
 
     [Fact]
