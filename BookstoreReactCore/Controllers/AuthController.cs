@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Security.Models;
 using Security.Services.Interfaces;
+using System.Security.Claims;
 
 namespace BookstoreReactCore.Controllers
 {
@@ -49,11 +50,19 @@ namespace BookstoreReactCore.Controllers
         [Authorize("Bearer")]
         public async Task<IActionResult> Revoke()
         {
-            var username = User.Identity.Name;
-            var result = await _loginService.RevokeTokenAsync(username);
+            var userName = User.FindFirst(ClaimTypes.Name)?.Value;
 
-            if (!result) 
-                return BadRequest("Ivalid client request");
+            if (string.IsNullOrEmpty(userName))
+            {
+                return BadRequest("Invalid client request: User not found.");
+            }
+
+            var result = await _loginService.RevokeTokenAsync(userName);
+
+            if (!result)
+            {
+                return BadRequest("Invalid client request");
+            }
 
             return NoContent();
         }

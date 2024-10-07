@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Models;
+using Models.DTO;
 using Services.Interfaces;
 
 namespace BookstoreReactCore.Controllers
@@ -28,7 +29,7 @@ namespace BookstoreReactCore.Controllers
         }
 
         [HttpGet("{sortDirection}/{pageSize}/{page}")]
-        [ProducesResponseType((200), Type = typeof(List<Book>))]
+        [ProducesResponseType((200), Type = typeof(Task<PagedSearchDTO<Book>>))]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
