@@ -24,7 +24,7 @@ namespace BookstoreReactCore.Controllers
             if (login == null) 
                 return BadRequest("Ivalid client request");
 
-            var token = await _loginService.ValidateCredentialsAsync(login);
+            var token = await _loginService.AuthenticateAsync(login);
             if (token == null) return Unauthorized();
             return Ok(token);
         }
@@ -36,7 +36,7 @@ namespace BookstoreReactCore.Controllers
             if (token is null) 
                 return BadRequest("Ivalid client request");
 
-            var tokenResult = await _loginService.ValidateCredentialsAsync(token);
+            var tokenResult = await _loginService.RefreshTokenAsync(token);
 
             if (tokenResult == null) 
                 return BadRequest("Ivalid client request");

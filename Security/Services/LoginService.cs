@@ -24,7 +24,7 @@ public class LoginService : ILoginService
         _context = context;
     }
 
-    public async Task<Token> ValidateCredentialsAsync(Login userCredentials)
+    public async Task<Token> AuthenticateAsync(Login userCredentials)
     {
         var user = await GetUserByLoginAsync(userCredentials);
 
@@ -36,16 +36,8 @@ public class LoginService : ILoginService
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
             new Claim(ClaimTypes.Name, user.UserName)
         };
-
-        var refreshToken = _tokenService.GenerateRefreshToken();
-
-        claims.Add(new Claim("RefreshToken", refreshToken));
-
+       
         var accessToken = _tokenService.GenerateAccessToken(claims);
-        
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.Now.AddDays(_configuration.DaysToExpiry);
-
         await _context.SaveChangesAsync();
 
         DateTime createDate = DateTime.Now;
@@ -55,33 +47,18 @@ public class LoginService : ILoginService
             true,
             createDate.ToString(DateFormat),
             expirationDate.ToString(DateFormat),
-            accessToken,
-            refreshToken
+            accessToken
         );
     }
 
-    public async Task<Token> ValidateCredentialsAsync(Token token)
+    public async Task<Token> RefreshTokenAsync(Token token)
     {
         var accessToken = token.AccessToken;
-        var refreshToken = token.RefreshToken;
 
         var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken);
-
-        var username = principal.Identity.Name;
-
-        var user = await GetUserByUserNameAsync(username);
-
-        if (user == null ||
-            user.RefreshToken != refreshToken ||
-            user.RefreshTokenExpiryTime <= DateTime.Now) return null;
-
+        
         accessToken = _tokenService.GenerateAccessToken(principal.Claims.ToList());
-        refreshToken = _tokenService.GenerateRefreshToken();
-
-        user.RefreshToken = refreshToken;
-
-        await _context.SaveChangesAsync();
-
+      
         var createDate = DateTime.Now;
         var expirationDate = createDate.AddMinutes(_configuration.Minutes);
 
@@ -89,31 +66,22 @@ public class LoginService : ILoginService
             true,
             createDate.ToString(DateFormat),
             expirationDate.ToString(DateFormat),
-            accessToken,
-            refreshToken
+            accessToken
         );
     }
 
     public async Task<bool> RevokeTokenAsync(string userName)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => (u.UserName == userName));
-        
-        if (user is null) 
-            return false;
-
-        user.RefreshToken = null;
-
-        await _context.SaveChangesAsync();
-        return true;
+       return true;
     }
 
-    public async Task<User?> GetUserByLoginAsync(Login user)
+    private async Task<User?> GetUserByLoginAsync(Login user)
     {
         var pass = PasswordHelper.ComputeHash(user.Password, SHA256.Create());
         return await _context.Users.FirstOrDefaultAsync(u => (u.UserName == user.UserName) && (u.Password == pass));
     }
 
-    public async Task<User?> GetUserByUserNameAsync(string userName)
+    private async Task<User?> GetUserByUserNameAsync(string userName)
     {
         return await _context.Users.FirstOrDefaultAsync(u => (u.UserName == userName));
     }

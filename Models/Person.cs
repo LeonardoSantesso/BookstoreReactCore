@@ -1,23 +1,12 @@
-﻿using Models.Base;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿namespace Models;
 
-namespace Models
+public class Person
 {
-    [Table("persons")]
-    public class Person : BaseEntity
-    {
-        [Column("first_name")]
-        public string FirstName { get; set; }
-
-        [Column("last_name")]
-        public string LastName { get; set; }
-
-        [Column("address")]
-        public string Address { get; set; }
-        [Column("gender")]
-        public string Gender { get; set; }
-
-        [Column("enabled")]
-        public bool Enabled { get; set; }
-    }
+    public long Id { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string Address { get; set; }
+    public string Gender { get; set; }
+    public bool Enabled { get; set; }
 }
+

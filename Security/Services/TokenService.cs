@@ -2,7 +2,6 @@
 using Security.Configurations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Security.Services.Interfaces;
 
@@ -32,17 +31,7 @@ public class TokenService : ITokenService
         string tokenString = new JwtSecurityTokenHandler().WriteToken(options);
         return tokenString;
     }
-
-    public string GenerateRefreshToken()
-    {
-        var randomNumber = new byte[32];
-        using (var rng = RandomNumberGenerator.Create())
-        {
-            rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
-        };
-    }
-
+    
     public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters
@@ -54,14 +43,11 @@ public class TokenService : ITokenService
             ValidateLifetime = false
         };
         var tokenHandler = new JwtSecurityTokenHandler();
-        SecurityToken securityToken;
 
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var securityToken);
+        
         var jwtSecurityToken = securityToken as JwtSecurityToken;
-        if (jwtSecurityToken == null ||
-            !jwtSecurityToken.Header.Alg.Equals(
-                SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCulture))
+        if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCulture))
             throw new SecurityTokenException("Invalid Token");
 
         return principal;

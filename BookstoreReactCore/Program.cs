@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using DAL.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -40,39 +39,6 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = tokenConfigurations.Audience,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenConfigurations.Secret)),
         NameClaimType = JwtRegisteredClaimNames.UniqueName
-    };
-
-    options.Events = new JwtBearerEvents
-    {
-        OnTokenValidated = async context =>
-        {
-            var userRepository = context.HttpContext.RequestServices.GetRequiredService<ILoginService>();
-            var claimsPrincipal = context.Principal;
-
-            var userName = context.Principal.FindFirst(ClaimTypes.Name)?.Value;
-
-            if (string.IsNullOrEmpty(userName))
-            {
-                context.Fail("Invalid token: User not found in token.");
-                return;
-            }
-
-            var user = await userRepository.GetUserByUserNameAsync(userName);
-            if (user == null)
-            {
-                context.Fail("Invalid token: User does not exist.");
-                return;
-            }
-
-            var refreshTokenClaim = claimsPrincipal.FindFirst("RefreshToken")?.Value;
-            if (refreshTokenClaim != user.RefreshToken)
-            {
-                context.Fail("Invalid token: Refresh token does not match.");
-                return;
-            }
-
-            // TOKEN VALID
-        }
     };
 });
 
@@ -125,7 +91,6 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 
 // app.UseCors(); // For all routes
 app.UseCors("AllowReactApp");
