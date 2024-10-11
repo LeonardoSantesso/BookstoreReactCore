@@ -1,0 +1,39 @@
+<div class="book-container">
+  <header>
+    <img src="logo.svg" alt="Book store" />
+    <span>Welcome, <strong>{{ userName.toUpperCase() }}</strong>!</span>
+    <a class="button" [routerLink]="['/book/new/0']">Add new book</a>
+    <button type="button" (click)="logout()">
+      <fa-icon [icon]="faPowerOff" size="lg" [style.color]="'#251FC5'"></fa-icon>
+    </button>
+    
+  </header>
+
+  <h1>Registered Books</h1>
+
+  <ul>
+    <li *ngFor="let book of booksList">
+      <strong>Title:</strong>
+      <p>{{ book.title }}</p>
+
+      <strong>Author:</strong>
+      <p>{{ book.author }}</p>
+
+      <strong>Price:</strong>
+      <p>{{ book.price | currency: 'USD':'symbol' }}</p>
+
+      <strong>Release Date:</strong>
+      <p>{{ book.launchDate | date: 'longDate' }}</p>
+
+      <button type="button" (click)="editBook(book.id)">
+        <fa-icon [icon]="faEdit" size="1x" [style.color]="'#251FC5'"></fa-icon>
+      </button>
+  
+      <button type="button" (click)="deleteBook(book.id)">
+        <fa-icon [icon]="faTrash" size="1x" [style.color]="'#251FC5'"></fa-icon>
+      </button>
+    </li>
+  </ul>
+
+  <button class="button" (click)="fetchMoreBooks()" type="button">Load more</button>
+</div>

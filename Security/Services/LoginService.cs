@@ -47,7 +47,8 @@ public class LoginService : ILoginService
             true,
             createDate.ToString(DateFormat),
             expirationDate.ToString(DateFormat),
-            accessToken
+            accessToken,
+            user.FullName
         );
     }
 
@@ -66,7 +67,8 @@ public class LoginService : ILoginService
             true,
             createDate.ToString(DateFormat),
             expirationDate.ToString(DateFormat),
-            accessToken
+            accessToken,
+            token.UserFullName
         );
     }
 

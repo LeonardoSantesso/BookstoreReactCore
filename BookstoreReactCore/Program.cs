@@ -53,21 +53,13 @@ builder.Services.AddAuthorization(auth =>
 // Add CORS
 builder.Services.AddCors(options =>
 {
-    // To allow all routes
-    //options.AddDefaultPolicy(policy =>
-    //{
-    //    policy.AllowAnyOrigin()
-    //        .AllowAnyHeader()
-    //        .AllowAnyMethod();
-    //});
-
-    options.AddPolicy("AllowReactApp",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:3000")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        });
+    options.AddPolicy("AllowReactAndAngularApps", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000", "http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
 });
 
 builder.Services.AddControllers(options => options.SuppressImplicitRequiredAttributeForNonNullableReferenceTypes = true);
@@ -93,7 +85,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 // app.UseCors(); // For all routes
-app.UseCors("AllowReactApp");
+app.UseCors("AllowReactAndAngularApps");
 
 app.UseHttpsRedirection();
 

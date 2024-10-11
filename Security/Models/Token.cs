@@ -1,17 +1,10 @@
 ﻿namespace Security.Models;
 
-public class Token
+public class Token(bool authenticated, string created, string expiration, string accessToken, string userFullName)
 {
-    public Token(bool authenticated, string created, string expiration, string accessToken)
-    {
-        Authenticated = authenticated;
-        Created = created;
-        Expiration = expiration;
-        AccessToken = accessToken;
-    }
-
-    public bool Authenticated { get; set; }
-    public string Created { get; set; }
-    public string Expiration { get; set; }
-    public string AccessToken { get; set; }
+    public bool Authenticated { get; set; } = authenticated;
+    public string Created { get; set; } = created;
+    public string Expiration { get; set; } = expiration;
+    public string AccessToken { get; set; } = accessToken;
+    public string UserFullName { get; set; } = userFullName;
 }

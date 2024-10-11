@@ -1,0 +1,9 @@
+<div *ngIf="bookId; else newBookTemplate">
+  <h2>Edit Book</h2>
+  <p>Editing book with ID: {{ bookId }}</p>
+</div>
+
+<ng-template #newBookTemplate>
+  <h2>Create a New Book</h2>
+  <p>Fill in the details to create a new book.</p>
+</ng-template>
